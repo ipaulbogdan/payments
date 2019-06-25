@@ -1,0 +1,12 @@
+spring:
+  datasource:
+      url: jdbc:postgresql://localhost:5432/postgres
+      username: PaulIdorasi
+      password: psqlPass
+      drive-class-name: org.postgreslq.Driver
+  jpa:
+    properties:
+      hibernate:
+        jdbc:
+          lob:
+              non_contextual_creation: true
