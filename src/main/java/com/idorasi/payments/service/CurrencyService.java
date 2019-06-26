@@ -13,16 +13,13 @@ public class CurrencyService {
     @Autowired
     private CurrencyRepository currencyRepository;
 
-
     public Currency add(Currency currency){
         return currencyRepository.save(currency);
     }
 
-
     public List<Currency> findAll(){
         return currencyRepository.findAll();
     }
-
 
     public Currency findBySymbol(String base) {
         return(currencyRepository.findBySymbol(base));

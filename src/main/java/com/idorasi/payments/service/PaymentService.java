@@ -1,5 +1,7 @@
 package com.idorasi.payments.service;
 
+import com.idorasi.payments.dto.PaymentDto;
+import com.idorasi.payments.model.ExchangeRate;
 import com.idorasi.payments.model.Payment;
 import com.idorasi.payments.model.PaymentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +13,13 @@ import java.util.List;
 public class PaymentService {
 
     @Autowired
-    PaymentRepository paymentRepository;
+    private PaymentRepository paymentRepository;
+
+    @Autowired
+     private CurrencyService currencyService;
+
+    @Autowired
+    private ExchangeRateService exchangeRateService;
 
 
     public Payment addPayment(Payment payment){
@@ -35,8 +43,15 @@ public class PaymentService {
     }
 
 
+    public PaymentDto findAndConvert(String itemName, String symbol) {
+        Payment payment = paymentRepository.findByItemName(itemName);
+        Long targetCurrencyId = currencyService.findBySymbol(symbol).getId();
+        ExchangeRate exchangeRate = exchangeRateService.findByBaseAndPair(payment.getId(),targetCurrencyId);
 
-
-
-
+        return new PaymentDto(itemName
+                ,symbol
+                ,(payment.getValue()*exchangeRate.getRate())
+                ,payment.getDate()
+                ,exchangeRate.getDate());
+    }
 }

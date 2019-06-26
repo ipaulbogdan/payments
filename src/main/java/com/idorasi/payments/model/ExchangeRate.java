@@ -1,6 +1,5 @@
 package com.idorasi.payments.model;
 
-
 import javax.persistence.*;;
 import java.time.LocalDate;
 

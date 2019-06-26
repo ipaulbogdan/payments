@@ -1,7 +1,6 @@
 package com.idorasi.payments.controller;
 
-
-
+import com.idorasi.payments.dto.PaymentDto;
 import com.idorasi.payments.model.Payment;
 import com.idorasi.payments.service.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +19,7 @@ public class PaymentController {
     public Payment addPayment(@RequestBody Payment payment){
         return paymentService.addPayment(payment);
     }
+
     @DeleteMapping("/delete")
     public void deletePayment(@RequestParam long id){
         paymentService.deletePayment(id);
@@ -40,6 +40,9 @@ public class PaymentController {
         return paymentService.findByItemName(itemName);
     }
 
-
+    @GetMapping("/get/{itemName}/convert/{symbol}")
+    public PaymentDto getAndConvert(@PathVariable String itemName, @PathVariable String symbol){
+        return(paymentService.findAndConvert(itemName,symbol));
+    }
 
 }

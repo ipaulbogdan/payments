@@ -1,13 +1,13 @@
 package com.idorasi.payments.controller;
 
-
-import com.idorasi.payments.dto.ExchangeRateDto;
 import com.idorasi.payments.model.ExchangeRate;
 import com.idorasi.payments.service.ExchangeRateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.NoRouteToHostException;
 import java.net.URISyntaxException;
+import java.net.UnknownHostException;
 import java.util.List;
 
 @RestController
@@ -19,7 +19,7 @@ public class ExchangeRateController {
 
 
     @PostMapping("/add/{date}")
-    public List<ExchangeRate> addExchangeRates(@PathVariable String date) throws URISyntaxException {
+    public List<ExchangeRate> addExchangeRates(@PathVariable String date) throws URISyntaxException,Exception{
         return(exchangeRatesService.add(date));
     }
 

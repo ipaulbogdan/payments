@@ -12,7 +12,7 @@
     <artifactId>payments</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>payments</name>
-    <description>Payments usign exchange api</description>
+    <description>Payments using exchange api</description>
 
     <properties>
         <java.version>1.8</java.version>
@@ -51,15 +51,21 @@
         </dependency>
 
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-            <optional>true</optional>
-        </dependency>
-
-        <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.springframework.retry</groupId>
+            <artifactId>spring-retry</artifactId>
+            <version>1.2.4.RELEASE</version>
+        </dependency>
+
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-starter-aop</artifactId>-->
+<!--        </dependency>-->
+
     </dependencies>
 
     <build>

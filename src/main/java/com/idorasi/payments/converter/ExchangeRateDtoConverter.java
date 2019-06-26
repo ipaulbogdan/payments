@@ -1,12 +1,9 @@
 package com.idorasi.payments.converter;
 
 import com.idorasi.payments.dto.ExchangeRateDto;
-import com.idorasi.payments.model.CurrencyRepository;
 import com.idorasi.payments.model.ExchangeRate;
 import com.idorasi.payments.service.CurrencyService;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
