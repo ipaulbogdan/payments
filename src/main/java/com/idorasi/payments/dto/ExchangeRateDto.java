@@ -14,14 +14,7 @@ public class ExchangeRateDto {
 
     public ExchangeRateDto(){}
 
-
-    public ExchangeRateDto(String base, LocalDate date, HashMap<String, Double> rates) {
-        this.base = base;
-        this.date = date;
-        this.rates = rates;
-    }
-
-    public String getBase() {
+    public String getBase()  {
         return base;
     }
 

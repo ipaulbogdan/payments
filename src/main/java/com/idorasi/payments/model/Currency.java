@@ -17,13 +17,6 @@ public class Currency {
     @Column
     private String symbol;
 
-    public Currency() {
-    }
-
-    public Currency(String name, String symbol) {
-        this.name = name;
-        this.symbol = symbol;
-    }
 
     public Long getId() {
         return id;

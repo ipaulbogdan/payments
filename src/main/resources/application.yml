@@ -4,9 +4,14 @@ spring:
       username: PaulIdorasi
       password: psqlPass
       drive-class-name: org.postgreslq.Driver
+  thymeleaf:
+      suffix: .html
+
+
   jpa:
     properties:
       hibernate:
         jdbc:
           lob:
               non_contextual_creation: true
+

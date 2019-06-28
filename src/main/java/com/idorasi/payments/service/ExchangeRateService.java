@@ -3,16 +3,16 @@ package com.idorasi.payments.service;
 import com.idorasi.payments.converter.ExchangeRateDtoConverter;
 import com.idorasi.payments.dto.ExchangeRateDto;
 import com.idorasi.payments.model.Currency;
+import com.idorasi.payments.model.CurrencyRepository;
 import com.idorasi.payments.model.ExchangeRate;
 import com.idorasi.payments.model.ExchangeRateRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
 
-import java.net.NoRouteToHostException;
 import java.net.URISyntaxException;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,41 +23,50 @@ public class ExchangeRateService {
     private ExchangeRateRepository exchangeRateRepository;
 
     @Autowired
-    private CurrencyService currencyService;
+    private CurrencyRepository currencyRepository;
 
     @Autowired
     private ExchangeRateClient exchangeRateClient;
 
-    public List<ExchangeRate> add(String date) throws URISyntaxException, Exception{
+    static final Logger LOGGER = LoggerFactory.getLogger(ExchangeRateService.class);
+
+    public List<ExchangeRate> updateExchangeRates(String date){
         List<ExchangeRateDto> exchangeRateDtoList = new ArrayList<>();
-        List<Currency> currencyList = currencyService.findAll();
-        List<Currency> pairCurrencyList;
-        String externalURL;
+        List<Currency> currencyList = currencyRepository.findAll();
 
-        for(Currency currency: currencyList){
-            pairCurrencyList = new ArrayList<>(currencyList);
-            pairCurrencyList.remove(currency);
+        for (Currency currency : currencyList){
+            List<Currency> pairCurrencyList = buildPairCurrencies(currency,currencyList);
 
-            externalURL = exchangeRateClient.createExternalApiUri(
-                    date,
-                    currency.getSymbol(),
-                    pairCurrencyList);
+            try {
+                String externalUrl = exchangeRateClient.createExternalApiUri(
+                        date,
+                        currency.getSymbol(),
+                        pairCurrencyList);
 
-            exchangeRateDtoList.add(exchangeRateClient
-                    .getRatesFromExternalApi(externalURL));
+                exchangeRateDtoList.add(exchangeRateClient.getRatesFromExternalApi(externalUrl));
+            } catch (URISyntaxException e) {
+                LOGGER.error("Error creating externalUrl", e);
+            }
         }
-        ExchangeRateDtoConverter exchangeDtoConverter = new ExchangeRateDtoConverter(currencyService);
 
-        return exchangeRateRepository.saveAll(exchangeDtoConverter.convert(exchangeRateDtoList));
+        ExchangeRateDtoConverter exchangeDtoConverter = new ExchangeRateDtoConverter(currencyRepository);
+        return exchangeRateRepository.saveAll(exchangeDtoConverter.convertToEntity(exchangeRateDtoList));
     }
 
 
-    public List<ExchangeRate> viewAll(){
+    public List<ExchangeRate> viewAll() {
         return exchangeRateRepository.findAll();
     }
 
 
     public ExchangeRate findByBaseAndPair(Long id, Long targetCurrencyId) {
-       return(exchangeRateRepository.findBySourceCurrencyAndTargetCurrencyOrderByDateDesc(id,targetCurrencyId).get(0));
+       return(exchangeRateRepository.findBySourceCurrencyAndTargetCurrencyOrderByDateDesc(id,targetCurrencyId).get().get(0));
+    }
+
+    private List<Currency> buildPairCurrencies(Currency currency, List<Currency> baseCurrencyList) {
+        List<Currency> pairCurrencies = new ArrayList<>(baseCurrencyList);
+        pairCurrencies.remove(currency);
+
+        return pairCurrencies;
     }
 }

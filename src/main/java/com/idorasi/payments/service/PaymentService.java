@@ -39,14 +39,16 @@ public class PaymentService {
     }
 
     public Payment findByItemName(String itemName){
-        return paymentRepository.findByItemName(itemName);
+        return paymentRepository.findByItemName(itemName)
+                .orElseThrow(IllegalArgumentException::new);
     }
 
 
     public PaymentDto findAndConvert(String itemName, String symbol) {
-        Payment payment = paymentRepository.findByItemName(itemName);
+        Payment payment = paymentRepository.findByItemName(itemName)
+                .orElseThrow(IllegalArgumentException::new);
         Long targetCurrencyId = currencyService.findBySymbol(symbol).getId();
-        ExchangeRate exchangeRate = exchangeRateService.findByBaseAndPair(payment.getId(),targetCurrencyId);
+        ExchangeRate exchangeRate = exchangeRateService.findByBaseAndPair(payment.getCurrencyId(),targetCurrencyId);
 
         return new PaymentDto(itemName
                 ,symbol

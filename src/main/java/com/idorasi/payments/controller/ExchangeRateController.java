@@ -5,26 +5,23 @@ import com.idorasi.payments.service.ExchangeRateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.NoRouteToHostException;
-import java.net.URISyntaxException;
-import java.net.UnknownHostException;
 import java.util.List;
-
+//todo thymeleaf for convert view
 @RestController
-@RequestMapping("/api/exchange")
+@RequestMapping("/api/exchanges")
 public class ExchangeRateController {
 
     @Autowired
     private ExchangeRateService exchangeRatesService;
 
 
-    @PostMapping("/add/{date}")
-    public List<ExchangeRate> addExchangeRates(@PathVariable String date) throws URISyntaxException,Exception{
-        return(exchangeRatesService.add(date));
+    @PostMapping("/exchange-rate-date/{exchangeRateDate}")
+    public List<ExchangeRate> addExchangeRates(@PathVariable String exchangeRateDate) {
+        return(exchangeRatesService.updateExchangeRates(exchangeRateDate));
     }
 
-    @GetMapping("/view/all")
-    public List<ExchangeRate> viewAllExchangeRates(){
+    @GetMapping
+    public List<ExchangeRate> viewAllExchangeRates() {
         return(exchangeRatesService.viewAll());
     }
 

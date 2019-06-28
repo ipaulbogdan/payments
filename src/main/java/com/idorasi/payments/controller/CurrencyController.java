@@ -9,26 +9,26 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/currency")
+@RequestMapping("/api/currencies")
 public class CurrencyController {
 
     @Autowired
     private CurrencyService currencyService;
 
 
-    @PostMapping("/add")
-    public Currency addNewCurrency(@RequestBody Currency currency){
+    @PostMapping
+    public Currency addNewCurrency(@RequestBody Currency currency) {
         return(currencyService.add(currency));
     }
 
-    @GetMapping("/get/all")
-    public List<Currency> getAll(){
+    @GetMapping
+    public List<Currency> getAll() {
         return currencyService.findAll();
     }
 
-    @GetMapping("/find")
-    public Object findById(@RequestParam String symbol){
-        return currencyService.findBySymbol(symbol);
+    @GetMapping("/currency-symbol/{currencySymbol}")
+    public Currency findById(@PathVariable String currencySymbol) {
+        return currencyService.findBySymbol(currencySymbol);
     }
 
 }

@@ -1,0 +1,31 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Convert currency</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+<table th:object="${paymentDto}"  style="align-self: center; padding-left: 40%">
+    <tr>
+        <td><h4>Item name: </h4></td>
+        <td><h4 th:text="${paymentDto.itemName}"></h4></td>
+    </tr>
+    <tr>
+        <td><h4>Value:</h4></td>
+        <td><h4 th:text="${paymentDto.value}"></h4></td>
+    </tr>
+    <tr>
+        <td><h4>Currency: </h4></td>
+        <td><h4 th:text="${paymentDto.pairCurrency}"></h4></td>
+    </tr>
+    <tr>
+        <td><h4>Purchase date:</h4></td>
+        <td><h4 th:text="${paymentDto.date}"></td>
+    </tr>
+    <tr>
+        <td><h4>Rate date:</h4></td>
+        <td><h4 th:text="${paymentDto.rateDate}"></h4></td>
+    </tr>
+</table>
+</body>
+</html>

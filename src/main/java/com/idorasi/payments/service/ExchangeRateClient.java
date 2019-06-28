@@ -10,13 +10,10 @@ import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import java.net.NoRouteToHostException;
 import java.net.URISyntaxException;
-import java.net.UnknownHostException;
 import java.util.List;
 
 @Component
@@ -25,11 +22,11 @@ public class ExchangeRateClient {
     private static final String BASE_API_URL = "https://api.exchangeratesapi.io/";
 
     String createExternalApiUri(String date, String baseSymbol, List<Currency> pairCurrency) throws URISyntaxException {
-        URIBuilder uri = new URIBuilder(BASE_API_URL+date);
-        uri.addParameter("base",baseSymbol);
+        URIBuilder uri = new URIBuilder(BASE_API_URL + date);
+        uri.addParameter("base", baseSymbol);
 
-        for(Currency currency:pairCurrency){
-            uri.addParameter("symbols",currency.getSymbol());
+        for (Currency currency : pairCurrency){
+            uri.addParameter("symbols", currency.getSymbol());
         }
 
         return uri.toString();
@@ -48,8 +45,8 @@ public class ExchangeRateClient {
     }
 
     @Recover
-    public ExchangeRateDto getExternalRecovery(Exception exeption) {
-        System.out.println("\nFAILED ACCESSING EXTERNAL API\n");
+    public ExchangeRateDto getExternalRecovery(Exception exception) {
+        ExchangeRateService.LOGGER.error("Can't access external api",exception);
         return new ExchangeRateDto();
     }
 

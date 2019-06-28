@@ -9,40 +9,41 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/payment")
+@RequestMapping("/api/payments")
 public class PaymentController {
 
     @Autowired
     private PaymentService paymentService;
 
-    @PostMapping("/add")
-    public Payment addPayment(@RequestBody Payment payment){
+    @PostMapping
+    public Payment addPayment(@RequestBody Payment payment) {
         return paymentService.addPayment(payment);
     }
 
-    @DeleteMapping("/delete")
-    public void deletePayment(@RequestParam long id){
+    @DeleteMapping("/item-name/{id}")
+    public void deletePayment(@PathVariable long id) { //use itemName
         paymentService.deletePayment(id);
     }
 
-    @DeleteMapping("/delete/all")
-    public void deleteAll(){
+    @DeleteMapping
+    public void deleteAll() {
         paymentService.deleteAll();
     }
 
-    @GetMapping("/view/all")
-    public List<Payment> viewPayments(){
+    @GetMapping
+    public List<Payment> viewPayments() {
         return paymentService.getPayments();
     }
 
-    @GetMapping("/get/{itemName}")
-    public Payment getByItemName(@PathVariable String itemName){
+    @GetMapping("/{itemName}")
+    public Payment getByItemName(@PathVariable String itemName) {
         return paymentService.findByItemName(itemName);
     }
 
-    @GetMapping("/get/{itemName}/convert/{symbol}")
-    public PaymentDto getAndConvert(@PathVariable String itemName, @PathVariable String symbol){
-        return(paymentService.findAndConvert(itemName,symbol));
+    @GetMapping("/item-name/{itemName}/currency/{symbol}/convert")
+    public PaymentDto getAndConvert(@PathVariable String itemName, @PathVariable String symbol) {
+       return(paymentService.findAndConvert(itemName, symbol));
     }
 
 }
+
