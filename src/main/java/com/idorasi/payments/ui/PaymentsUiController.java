@@ -1,4 +1,4 @@
-package com.idorasi.payments.ui_controller;
+package com.idorasi.payments.ui;
 
 import com.idorasi.payments.dto.PaymentDto;
 import com.idorasi.payments.service.PaymentService;
@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
-public class paymentsUi {
+public class PaymentsUiController {
 
     @Autowired
     PaymentService paymentService;
@@ -19,6 +19,7 @@ public class paymentsUi {
     public String getAndConvert(@PathVariable String itemName, @PathVariable String currency, Model model) {
         PaymentDto paymentDto = paymentService.findAndConvert(itemName,currency);
         model.addAttribute("paymentDto",paymentDto);
+
         return "convert-result";
     }
 

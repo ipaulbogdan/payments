@@ -38,6 +38,10 @@ public class Currency {
         this.symbol = symbol;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     @Override
     public String toString() {
         return "{" +

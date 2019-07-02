@@ -17,6 +17,10 @@ public class ExchangeRateDtoConverter {
         this.currencyRepository = currencyRepository;
     }
 
+    public ExchangeRateDtoConverter() {
+
+    }
+
     public List<ExchangeRate> convertToEntity(List<ExchangeRateDto> exchangeDtoList) {
         List<ExchangeRate> exchangeRateList = exchangeDtoList.stream()
                 .map(exchangeDto -> convertToExchangeRateList(exchangeDto))
@@ -25,6 +29,7 @@ public class ExchangeRateDtoConverter {
 
         return exchangeRateList;
     }
+
 
     private ExchangeRate convertToExchangeRate(ExchangeRateDto exchangeDto,Map.Entry<String,Double> rate) {
         Currency sourceCurrency = currencyRepository.findBySymbol(exchangeDto.getBase())

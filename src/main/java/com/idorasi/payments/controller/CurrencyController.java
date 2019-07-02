@@ -27,7 +27,7 @@ public class CurrencyController {
     }
 
     @GetMapping("/currency-symbol/{currencySymbol}")
-    public Currency findById(@PathVariable String currencySymbol) {
+    public Currency findBySymbol(@PathVariable String currencySymbol) {
         return currencyService.findBySymbol(currencySymbol);
     }
 

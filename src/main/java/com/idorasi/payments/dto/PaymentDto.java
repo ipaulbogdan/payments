@@ -57,4 +57,9 @@ public class PaymentDto {
     public void setRateDate(LocalDate rateDate) {
         this.rateDate = rateDate;
     }
+
+
+
+
+
 }

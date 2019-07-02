@@ -11,10 +11,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
-import java.net.URISyntaxException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ExchangeRateService {
@@ -30,23 +30,19 @@ public class ExchangeRateService {
 
     static final Logger LOGGER = LoggerFactory.getLogger(ExchangeRateService.class);
 
-    public List<ExchangeRate> updateExchangeRates(String date){
+    public List<ExchangeRate> updateExchangeRates(LocalDate date){
         List<ExchangeRateDto> exchangeRateDtoList = new ArrayList<>();
         List<Currency> currencyList = currencyRepository.findAll();
 
         for (Currency currency : currencyList){
             List<Currency> pairCurrencyList = buildPairCurrencies(currency,currencyList);
 
-            try {
-                String externalUrl = exchangeRateClient.createExternalApiUri(
-                        date,
-                        currency.getSymbol(),
-                        pairCurrencyList);
-
-                exchangeRateDtoList.add(exchangeRateClient.getRatesFromExternalApi(externalUrl));
-            } catch (URISyntaxException e) {
-                LOGGER.error("Error creating externalUrl", e);
-            }
+            exchangeRateDtoList.add(
+                    exchangeRateClient.getRatesFromExternalApi(
+                            date,
+                            currency.getSymbol(),
+                            pairCurrencyList)
+                    );
         }
 
         ExchangeRateDtoConverter exchangeDtoConverter = new ExchangeRateDtoConverter(currencyRepository);
@@ -59,8 +55,8 @@ public class ExchangeRateService {
     }
 
 
-    public ExchangeRate findByBaseAndPair(Long id, Long targetCurrencyId) {
-       return(exchangeRateRepository.findBySourceCurrencyAndTargetCurrencyOrderByDateDesc(id,targetCurrencyId).get().get(0));
+    public Optional<ExchangeRate> findByBaseAndPair(Long id, Long targetCurrencyId) {
+       return exchangeRateRepository.findFirstBySourceCurrencyAndTargetCurrencyOrderByDateDesc(id,targetCurrencyId);
     }
 
     private List<Currency> buildPairCurrencies(Currency currency, List<Currency> baseCurrencyList) {

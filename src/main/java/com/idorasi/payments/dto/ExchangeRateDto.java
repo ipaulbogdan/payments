@@ -3,8 +3,6 @@ package com.idorasi.payments.dto;
 import java.time.LocalDate;
 import java.util.HashMap;
 
-
-
 public class ExchangeRateDto {
 
     private String base;

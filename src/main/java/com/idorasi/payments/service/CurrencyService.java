@@ -16,7 +16,7 @@ public class CurrencyService {
 
     public Currency add(Currency currency) {
         return currencyRepository.save(currency);
-    }
+}
 
     public List<Currency> findAll() {
         return currencyRepository.findAll();

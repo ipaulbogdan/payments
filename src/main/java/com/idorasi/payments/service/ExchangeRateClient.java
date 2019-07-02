@@ -14,26 +14,20 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URISyntaxException;
+import java.time.LocalDate;
 import java.util.List;
+
+import static com.idorasi.payments.service.ExchangeRateService.LOGGER;
 
 @Component
 public class ExchangeRateClient {
 
     private static final String BASE_API_URL = "https://api.exchangeratesapi.io/";
 
-    String createExternalApiUri(String date, String baseSymbol, List<Currency> pairCurrency) throws URISyntaxException {
-        URIBuilder uri = new URIBuilder(BASE_API_URL + date);
-        uri.addParameter("base", baseSymbol);
-
-        for (Currency currency : pairCurrency){
-            uri.addParameter("symbols", currency.getSymbol());
-        }
-
-        return uri.toString();
-    }
-
     @Retryable(value = {HttpClientErrorException.class}, backoff = @Backoff(200))
-    public ExchangeRateDto getRatesFromExternalApi(String exchangeRatesApiUrl) {
+    public ExchangeRateDto getRatesFromExternalApi(LocalDate date, String baseSymbol, List<Currency> pairCurrency) {
+        String  exchangeRatesApiUrl
+                = createExternalApiUri(date, baseSymbol, pairCurrency);
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<ExchangeRateDto> response = restTemplate.exchange(
                 exchangeRatesApiUrl,
@@ -44,9 +38,25 @@ public class ExchangeRateClient {
         return response.getBody();
     }
 
+    private String createExternalApiUri(LocalDate date, String baseSymbol, List<Currency> pairCurrency) {
+        try {
+            URIBuilder uriBuilder = new URIBuilder(BASE_API_URL + date.toString());
+            uriBuilder.addParameter("base", baseSymbol);
+
+            for (Currency currency : pairCurrency){
+                uriBuilder.addParameter("symbols", currency.getSymbol());
+            }
+
+            return uriBuilder.toString();
+        } catch (URISyntaxException e) {
+            LOGGER.error("Error creating externalUrl", e);
+            throw new IllegalArgumentException();
+        }
+    }
+
     @Recover
     public ExchangeRateDto getExternalRecovery(Exception exception) {
-        ExchangeRateService.LOGGER.error("Can't access external api",exception);
+        LOGGER.error("Can't access external api",exception);
         return new ExchangeRateDto();
     }
 

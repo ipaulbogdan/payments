@@ -7,7 +7,11 @@ import com.idorasi.payments.model.PaymentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
+
+import static com.idorasi.payments.dto.PaymentDtoBuilder.aPaymentDto;
 
 @Service
 public class PaymentService {
@@ -43,17 +47,25 @@ public class PaymentService {
                 .orElseThrow(IllegalArgumentException::new);
     }
 
-
     public PaymentDto findAndConvert(String itemName, String symbol) {
         Payment payment = paymentRepository.findByItemName(itemName)
                 .orElseThrow(IllegalArgumentException::new);
         Long targetCurrencyId = currencyService.findBySymbol(symbol).getId();
-        ExchangeRate exchangeRate = exchangeRateService.findByBaseAndPair(payment.getCurrencyId(),targetCurrencyId);
 
-        return new PaymentDto(itemName
-                ,symbol
-                ,(payment.getValue()*exchangeRate.getRate())
-                ,payment.getDate()
-                ,exchangeRate.getDate());
+        Optional<ExchangeRate> exchangeRate = exchangeRateService.findByBaseAndPair(payment.getCurrencyId(),targetCurrencyId);
+
+        return exchangeRate.map(rate -> buildPaymentDto(payment, symbol, rate.getRate(),rate.getDate()))
+                .orElseGet(() -> buildPaymentDto(payment, symbol,1.0,null));
+
+    }
+    private PaymentDto buildPaymentDto(Payment payment, String symbol, Double rate, LocalDate date){
+        Double value = payment.getValue() * rate;
+        return aPaymentDto()
+                .withItemName(payment.getItemName())
+                .withPairCurrency(symbol)
+                .withValue(value)
+                .withDate(payment.getDate())
+                .withRateDate(date)
+                .build();
     }
 }

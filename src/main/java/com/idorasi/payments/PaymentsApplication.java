@@ -14,5 +14,3 @@ public class PaymentsApplication {
 
 }
 
-
-//todo spring logging
