@@ -5,6 +5,7 @@ import com.idorasi.payments.model.Currency;
 import com.idorasi.payments.model.CurrencyRepository;
 import com.idorasi.payments.model.ExchangeRate;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -17,9 +18,6 @@ public class ExchangeRateDtoConverter {
         this.currencyRepository = currencyRepository;
     }
 
-    public ExchangeRateDtoConverter() {
-
-    }
 
     public List<ExchangeRate> convertToEntity(List<ExchangeRateDto> exchangeDtoList) {
         List<ExchangeRate> exchangeRateList = exchangeDtoList.stream()
@@ -31,11 +29,17 @@ public class ExchangeRateDtoConverter {
     }
 
 
+    private List<ExchangeRate> convertToExchangeRateList(ExchangeRateDto exchangeDto) {
+        return exchangeDto.getRates().entrySet().stream()
+                .map(rate -> convertToExchangeRate(exchangeDto,rate))
+                .collect(Collectors.toList());
+    }
+
     private ExchangeRate convertToExchangeRate(ExchangeRateDto exchangeDto,Map.Entry<String,Double> rate) {
         Currency sourceCurrency = currencyRepository.findBySymbol(exchangeDto.getBase())
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(EntityNotFoundException::new);
         Currency targetCurrency = currencyRepository.findBySymbol(rate.getKey())
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(EntityNotFoundException::new);
 
         ExchangeRate exchangeRate = new ExchangeRate();
         exchangeRate.setSourceCurrency(sourceCurrency.getId());
@@ -44,12 +48,6 @@ public class ExchangeRateDtoConverter {
         exchangeRate.setRate(rate.getValue());
 
         return exchangeRate;
-    }
-
-    private List<ExchangeRate> convertToExchangeRateList(ExchangeRateDto exchangeDto) {
-        return exchangeDto.getRates().entrySet().stream()
-                .map(rate -> convertToExchangeRate(exchangeDto,rate))
-                .collect(Collectors.toList());
     }
 
 

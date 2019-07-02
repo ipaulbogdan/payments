@@ -36,12 +36,7 @@ public final class PaymentDtoBuilder {
         return this;
     }
 
-    public PaymentDtoBuilder withRateDate(LocalDate rateDate) {
-        this.rateDate = rateDate;
-        return this;
-    }
-
     public PaymentDto build() {
-        return new PaymentDto(itemName, pairCurrency, value, date, rateDate);
+        return new PaymentDto(itemName, pairCurrency, value, date);
     }
 }

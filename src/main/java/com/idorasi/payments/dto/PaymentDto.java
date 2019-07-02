@@ -8,14 +8,12 @@ public class PaymentDto {
     private String pairCurrency;
     private Double value;
     private LocalDate date;
-    private LocalDate rateDate;
 
-    public PaymentDto(String itemName, String pairCurrency, Double value, LocalDate date, LocalDate rateDate) {
+    public PaymentDto(String itemName, String pairCurrency, Double value, LocalDate date) {
         this.itemName = itemName;
         this.pairCurrency = pairCurrency;
         this.value = value;
         this.date = date;
-        this.rateDate = rateDate;
     }
 
     public String getItemName() {
@@ -49,17 +47,5 @@ public class PaymentDto {
     public void setDate(LocalDate date) {
         this.date = date;
     }
-
-    public LocalDate getRateDate() {
-        return rateDate;
-    }
-
-    public void setRateDate(LocalDate rateDate) {
-        this.rateDate = rateDate;
-    }
-
-
-
-
 
 }

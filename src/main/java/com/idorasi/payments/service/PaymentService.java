@@ -7,9 +7,8 @@ import com.idorasi.payments.model.PaymentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
-import java.util.Optional;
 
 import static com.idorasi.payments.dto.PaymentDtoBuilder.aPaymentDto;
 
@@ -44,28 +43,34 @@ public class PaymentService {
 
     public Payment findByItemName(String itemName){
         return paymentRepository.findByItemName(itemName)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(EntityNotFoundException::new);
     }
 
     public PaymentDto findAndConvert(String itemName, String symbol) {
         Payment payment = paymentRepository.findByItemName(itemName)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(EntityNotFoundException::new);
         Long targetCurrencyId = currencyService.findBySymbol(symbol).getId();
+        Double rate = findConversionRate(payment,targetCurrencyId);
 
-        Optional<ExchangeRate> exchangeRate = exchangeRateService.findByBaseAndPair(payment.getCurrencyId(),targetCurrencyId);
-
-        return exchangeRate.map(rate -> buildPaymentDto(payment, symbol, rate.getRate(),rate.getDate()))
-                .orElseGet(() -> buildPaymentDto(payment, symbol,1.0,null));
-
+       return buildPaymentDto(payment,symbol,rate);
     }
-    private PaymentDto buildPaymentDto(Payment payment, String symbol, Double rate, LocalDate date){
-        Double value = payment.getValue() * rate;
+
+    private Double findConversionRate(Payment payment,Long targetCurrencyId) {
+        if (payment.getCurrencyId().equals(targetCurrencyId)) {
+            return payment.getValue() * 1.0;
+        }
+        ExchangeRate exchangeRate = exchangeRateService.findByBaseAndPair(payment.getCurrencyId(),targetCurrencyId)
+                    .orElseThrow(EntityNotFoundException::new);
+
+        return payment.getValue() * exchangeRate.getRate();
+    }
+
+    private PaymentDto buildPaymentDto(Payment payment, String symbol, Double rate){
         return aPaymentDto()
                 .withItemName(payment.getItemName())
                 .withPairCurrency(symbol)
-                .withValue(value)
+                .withValue(rate)
                 .withDate(payment.getDate())
-                .withRateDate(date)
                 .build();
     }
 }

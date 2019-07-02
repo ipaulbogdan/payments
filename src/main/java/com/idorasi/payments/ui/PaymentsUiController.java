@@ -17,6 +17,7 @@ public class PaymentsUiController {
 
     @GetMapping("/api/payments/ui/item-name/{itemName}/currency/{currency}/convert")
     public String getAndConvert(@PathVariable String itemName, @PathVariable String currency, Model model) {
+        currency = currency.toUpperCase();
         PaymentDto paymentDto = paymentService.findAndConvert(itemName,currency);
         model.addAttribute("paymentDto",paymentDto);
 
