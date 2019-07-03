@@ -44,4 +44,6 @@ public class ExchangeRateDto {
                 ", rates=" + rates +
                 '}';
     }
+
+
 }

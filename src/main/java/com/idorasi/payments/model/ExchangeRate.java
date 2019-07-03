@@ -2,6 +2,7 @@ package com.idorasi.payments.model;
 
 import javax.persistence.*;;
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Entity
 @Table(name="exchangerates")
@@ -63,4 +64,22 @@ public class ExchangeRate {
     public void setDate(LocalDate date) {
         this.date = date;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ExchangeRate that = (ExchangeRate) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(sourceCurrency, that.sourceCurrency) &&
+                Objects.equals(targetCurrency, that.targetCurrency) &&
+                Objects.equals(rate, that.rate) &&
+                Objects.equals(date, that.date);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, sourceCurrency, targetCurrency, rate, date);
+    }
+
 }

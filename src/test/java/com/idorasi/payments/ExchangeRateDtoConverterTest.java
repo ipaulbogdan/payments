@@ -11,12 +11,11 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -69,5 +68,64 @@ public class ExchangeRateDtoConverterTest {
 
         when(currencyRepository.findBySymbol("USD")).thenReturn(Optional.of(dummyCurrency));
         converter.convertToEntity(exchangeRateDtos);
+    }
+
+    @Test
+    public void hasDtoList_EntityAnswer() {
+        ExchangeRateDtoConverter converter = new ExchangeRateDtoConverter(currencyRepository);
+        List<ExchangeRateDto> exchangeRateDtos = new ArrayList<>();
+        List<ExchangeRate> expectedExchangeRates = new ArrayList<>();
+        HashMap<String,Double> rates = new HashMap<>();
+        rates.put("CAD",4.88);
+        rates.put("RON",3.5);
+        rates.put("EUR",4.75);
+        ExchangeRateDto exchangeRateDto = new ExchangeRateDto();
+        exchangeRateDto.setBase("USD");
+        exchangeRateDto.setRates(rates);
+        exchangeRateDto.setDate(LocalDate.now());
+        exchangeRateDtos.add(exchangeRateDto);
+        Currency cad = new Currency();
+        cad.setSymbol("CAD");
+        cad.setName("Canadian");
+        cad.setId((long) 1);
+        Currency ron = new Currency();
+        ron.setSymbol("RON");
+        ron.setName("Leu");
+        ron.setId((long) 2);
+        Currency euro = new Currency();
+        euro.setSymbol("EUR");
+        euro.setName("Euro");
+        euro.setId((long) 3);
+        Currency dolar = new Currency();
+        dolar.setSymbol("USD");
+        dolar.setName("dolar");
+        dolar.setId((long) 4);
+
+        when(currencyRepository.findBySymbol("USD")).thenReturn(Optional.of(dolar));
+        when(currencyRepository.findBySymbol("CAD")).thenReturn(Optional.of(cad));
+        when(currencyRepository.findBySymbol("RON")).thenReturn(Optional.of(ron));
+        when(currencyRepository.findBySymbol("EUR")).thenReturn(Optional.of(euro));
+
+        ExchangeRate exchangeRate = new ExchangeRate();
+        exchangeRate.setDate(LocalDate.now());
+        exchangeRate.setSourceCurrency(dolar.getId());
+        exchangeRate.setTargetCurrency(cad.getId());
+        exchangeRate.setRate(4.88);
+        expectedExchangeRates.add(exchangeRate);
+        exchangeRate = new ExchangeRate();
+        exchangeRate.setDate(LocalDate.now());
+        exchangeRate.setSourceCurrency(dolar.getId());
+        exchangeRate.setTargetCurrency(ron.getId());
+        exchangeRate.setRate(3.5);
+        expectedExchangeRates.add(exchangeRate);
+        exchangeRate = new ExchangeRate();
+        exchangeRate.setDate(LocalDate.now());
+        exchangeRate.setSourceCurrency(dolar.getId());
+        exchangeRate.setTargetCurrency(euro.getId());
+        exchangeRate.setRate(4.75);
+        expectedExchangeRates.add(exchangeRate);
+        List<ExchangeRate> exchangeRates = converter.convertToEntity(exchangeRateDtos);
+
+        assertTrue(expectedExchangeRates.containsAll(exchangeRates));
     }
 }
