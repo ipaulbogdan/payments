@@ -26,8 +26,7 @@ public class ExchangeRateClient {
 
     @Retryable(value = {HttpClientErrorException.class}, backoff = @Backoff(200))
     public ExchangeRateDto getRatesFromExternalApi(LocalDate date, String baseSymbol, List<Currency> pairCurrency) {
-        String  exchangeRatesApiUrl
-                = createExternalApiUri(date, baseSymbol, pairCurrency);
+        String  exchangeRatesApiUrl = createExternalApiUri(date, baseSymbol, pairCurrency);
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<ExchangeRateDto> response = restTemplate.exchange(
                 exchangeRatesApiUrl,
